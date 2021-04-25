@@ -3,21 +3,21 @@
 	include 'functions.php';
 	$games = getGames();
 
+	$title = 'Spellen plannen';
+
 	include 'pagePart/header.php';
 ?>
-    	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-	</head>
-	<body>
-		<div class="container">
-			<div class="row">
-				<header class="bg-info text-center pb-2 col-12">
-					<h1 class="m-0 text-white">Spellen plannen</h1>
+					<h1 class="m-0 text-white text-center">Spellen plannen</h1>
 				</header>
 			</div>
 			<nav class="nav nav-tabs">
 				<a href="index.php" class="nav-link active">kiezen</a>
 				<a href="planning.php" class="nav-link">plannen</a>
+				<a href="days.php" class="nav-link">Ingepande speeldagen</a>
 			</nav>
+			<div class="row border border-secondary">
+				<a href="planning/planDay.php" class="ml-4"><i class="fas fa-clock text-dark"></i>Dagen inplannen</a>
+			</div>
 			<div class="row">
 			<?php
 				foreach ($games as $g) {

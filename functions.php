@@ -78,6 +78,57 @@
 		return $result;
 	}
 
+	function day(){
+		$conn = createConnection();
+		$sql = 'SELECT * FROM days ORDER BY day, start';
+		$sth = $conn->prepare($sql);
+		$sth->execute();
+		$result = $sth->fetchAll();
+		return $result;
+	}
+
+	function getDay($id){
+		$conn = createConnection();
+		$sql = 'SELECT * FROM days WHERE id=:id';
+		$sth = $conn->prepare($sql);
+		$sth->bindParam(':id', $id);
+		$sth->execute();
+		$result = $sth->fetch();
+		return $result;
+	}
+
+	function planDay($day, $start, $finish, $games){
+		$conn = createConnection();
+		$sql = 'INSERT INTO days(day, start, finish, games) VALUES (:day, :start, :finish, :games)';
+		$sth = $conn->prepare($sql);
+		$sth->bindParam(':day', $day);
+		$sth->bindParam(':start', $start);
+		$sth->bindParam(':finish', $finish);
+		$sth->bindParam(':games', $games);
+		$sth->execute();
+	}
+
+	function updateDay($id, $day, $start, $finish, $games){
+		$conn = createConnection();
+		$sql = 'UPDATE days SET day=:day, start=:start, finish=:finish, games=:games WHERE id=:id';
+		$sth = $conn->prepare($sql);
+		$sth->bindParam(':id', $id);
+		$sth->bindParam(':day', $day);
+		$sth->bindParam(':start', $start);
+		$sth->bindParam(':finish', $finish);
+		$sth->bindParam(':games', $games);
+		$sth->execute();
+	}
+
+	function delDay($id){
+		$conn = createConnection();
+		$sql = 'DELETE FROM days WHERE id=:id';
+		$sth = $conn->prepare($sql);
+		$sth->bindParam(':id', $id);
+		$sth->execute();
+	}
+
+
 	function testInput($data){
 		$data = trim($data);
 		$data = stripslashes($data);

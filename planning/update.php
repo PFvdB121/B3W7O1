@@ -9,15 +9,20 @@
 	else{
 		header('Location: ../planning.php');
 	}
+	if ($dis>=10 && $dif == true) {
+		header('Location: ../game.php?id=' . $game['id'] . '&dif=false');
+	}
+
+	$title = 'planning veranderen';
 	
 	$empty = [];
 
-	$amountPlayers = false;
-
-	$succes=false;
-	$x=0;
-
 	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+		$loop2 = false;
+		$loop3 = false;
+		$playTime = true;
+		$amountPlayers = false;
+		$x=0;
 		foreach ($_POST as $key => $value) {
 			if (!empty($value)) {
 				$x++;
@@ -43,23 +48,71 @@
 			}
 		}
 
-		if ($x==count($_POST) && $amountPlayers == true) {
-			$succes=true;
+		$plus = $game['explain_minutes'] + $game['play_minutes'];
+		$endP = date('H:i:s', strtotime('+' . $plus . ' minutes',strtotime($_POST['clock'])));
+		foreach ($planning as $p) {
+			if ($game['id'] == $p['game'] && $_POST['day'] == $p['day']) {
+				$endG = date('H:i:s', strtotime('+' . $plus . ' minutes',strtotime($p['clock'])));
+				if (($_POST['clock']>=$p['clock'] && $_POST['clock']<=$endG) || ($endP >= $p['clock'] && $endP <=$endG)) {
+					$playTime = false;
+					$empty['clock'] = 'kies een andere tijd. Dit spel is al bezet';
+					break;
+				}
+				else{
+					$empty['clock'] = '';
+				}
+			}
 		}
-		if ($succes==true){
-			updatePlan(testInput($plan['id']), testInput($_POST['day']), testInput($_POST['clock']), testInput($_POST['explainer']), testInput($_POST['players']));
+
+		$splitPOST = explode(", ", $_POST['players']);
+		foreach ($planning as $p) {
+			$endG = date('H:i:s', strtotime('+' . $plus . ' minutes',strtotime($p['clock'])));
+			$splitPlan = explode(", ", $p['players']);
+			foreach ($splitPOST as $sPOST) {
+				foreach ($splitPlan as $sPlan) {
+					if ($_POST['day'] == $p['day'] && $sPOST == $sPlan) {
+						if (($_POST['clock']>=$p['clock'] && $_POST['clock']<=$endG) || ($endP >= $p['clock'] && $endP <=$endG)) {
+							$playTime = false;
+							$empty['players'] = $sPOST . ' is al op dezelfde tijd ingepland voor een ander spel';
+							$loop2 = true;
+							break;
+						}
+						else{
+							$empty['players'] = '';
+						}
+					}
+				}
+				if ($loop2 == true) {
+					$loop3 = true;
+					break;
+				}
+			}
+			if ($loop3 == true) {
+				break;
+			}
+		}
+		foreach ($planning as $p) {
+			$endG = date('H:i:s', strtotime('+' . $plus . ' minutes',strtotime($p['clock'])));
+			if ($_POST['day'] == $p['day'] && $_POST['explainer'] == $p['explainer']) {
+				if (($_POST['clock']>=$p['clock'] && $_POST['clock']<=$endG) || ($endP >= $p['clock'] && $endP <=$endG)) {
+					$playTime = false;
+					$empty['explainer'] = $_POST['explainer'] . ' is al op dezelfde tijd ingepland voor een ander spel';
+					break
+				}
+				else{
+					$empty['explainer'] = '';
+				}
+			}
+		}
+
+		if ($x==count($_POST) && $amountPlayers == true && $playTime == true) {
+			updatePlan(testInput(testInput($plan['id'])), testInput($_POST['day']), testInput($_POST['clock']), testInput($_POST['explainer']), testInput($_POST['players']));
 			header('Location: ../planning.php?action=update');
 		}
 	}
 
 	include '../pagePart/header.php';
 ?>
-    	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-	</head>
-	<body>
-		<div class="container">
-			<div class="row">
-				<header class="bg-info text-right pb-2 col-12">
 					<h1 class="text-white text-center">planning veranderen</h1>
 					<a href="../planning.php" class="text-dark"><i class="fas fa-long-arrow-alt-left"></i> Terug</a>
 				</header>

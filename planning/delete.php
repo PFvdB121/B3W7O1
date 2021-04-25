@@ -4,6 +4,7 @@
 
 	if (isset($_GET['id'])) {
 		$plan = plan(testInput($_GET['id']));
+		$game = getGame($plan['game']);
 	}
 	else{
 		header('Location: ../planning.php');
@@ -13,18 +14,15 @@
 		header('Location: ../planning.php?action=delete');
 	}
 
+	$title = 'deleten';
+
 	include '../pagePart/header.php';
 ?>
-    	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-	</head>
-	<body>
-		<div class="container">
-			<div class="row">
-				<header class="bg-info text-right pb-2 col-12">
 					<h1 class="text-white text-center">deleten</h1>
 				</header>
 			</div>
 			<div class="row">
+				<strong class="text-center w-100">Weet u zeker dat u de afspraak om <?php echo $game['name']; ?> te spelen op <?php echo $plan['day']; ?> om <?php echo $plan['clock']; ?> wilt verwijderen?</strong>
 				<form method="post" class="col-12 d-flex justify-content-center">
 					<input type="submit" name="yes" class="btn btn-success mx-4" value="Ja">
 					<a href="../planning.php" class="btn btn-danger mx-4">Nee</a>

@@ -4,20 +4,17 @@
 
 	$planning = planning();
 
+	$title = 'planning';
+
 	include 'pagePart/header.php';
 ?>
-    	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-	</head>
-	<body>
-		<div class="container">
-			<div class="row">
-				<header class="bg-info text-right pb-2 col-12">
-					<h1 class="text-white text-center"><?php echo $game['name']; ?> toevoegen</h1>
+					<h1 class="text-white text-center">planning</h1>
 				</header>
 			</div>
 			<nav class="nav nav-tabs">
 				<a href="index.php" class="nav-link">kiezen</a>
 				<a href="planning.php" class="nav-link active">plannen</a>
+				<a href="days.php" class="nav-link">Ingepande speeldagen</a>
 			</nav>
 			<?php
 				if(isset($_GET['action'])){
