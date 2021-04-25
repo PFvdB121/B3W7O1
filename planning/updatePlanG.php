@@ -34,7 +34,7 @@
 			}
 		}
 		updateDay($id, $day, $start, $finish, testInput($gamePlan));
-		header('Location: ../days.php');
+		header('Location: ../days.php?action=update');
 	}
 
 	include '../pagePart/header.php';

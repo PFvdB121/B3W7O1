@@ -16,6 +16,20 @@
 				<a href="planning.php" class="nav-link">plannen</a>
 				<a href="days.php" class="nav-link active">Ingepande speeldagen</a>
 			</nav>
+			<?php
+				if(isset($_GET['action'])){
+					if ($_GET['action']=='delete') {
+			?>
+			<div class="alert alert-success row"><strong>Succesvol gedelete</strong></div>
+			<?php
+					}
+					elseif ($_GET['action']=='update') {
+			?>
+			<div class="alert alert-success row"><strong>Succesvol veranderd</strong></div>
+			<?php
+					}
+				}
+			?>
 			<div class="row border">
 				<div class="col-2 border-right border-secondary">
 					<strong>Datum</strong>
