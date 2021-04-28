@@ -3,15 +3,6 @@
 	include '../functions.php';
 
 	$title = 'dagen inplannen';
-	if (isset($_GET['day']) && isset($_GET['start']) && isset($_GET['finish'])){
-		$day = $_GET['day'];
-		$start = $_GET['start'];
-		$finish = $_GET['finish'];
-	}
-
-	else{
-		header('Location: ../index.php');
-	}
 
 	if ($_SERVER['REQUEST_METHOD'] == 'POST') {		
 		$day = $_POST['day'];
