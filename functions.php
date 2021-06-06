@@ -128,7 +128,6 @@
 		$sth->execute();
 	}
 
-
 	function testInput($data){
 		$data = trim($data);
 		$data = stripslashes($data);

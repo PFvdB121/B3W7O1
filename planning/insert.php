@@ -12,6 +12,7 @@
 	$title = $game['name'] . ' toevoegen';
 	
 	$dis = disPlan();
+	$people = people();
 
 	$dif = true;
 
@@ -29,11 +30,10 @@
 	$empty = [];
 
 	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-		$loop2 = false;
-		$loop3 = false;
 		$playTime = true;
 		$amountPlayers = false;
 		$x=0;
+
 		foreach ($_POST as $key => $value) {
 			if (!empty($value)) {
 				$x++;
@@ -45,6 +45,8 @@
 
 		$split = explode(", ", $_POST['players']);
 		$amount = count($split);
+		$plus = $game['explain_minutes'] + $game['play_minutes'];
+		$endP = date('H:i:s', strtotime('+' . $plus . ' minutes',strtotime($_POST['clock'])));
 		
 		if ($amount>=$game['min_players'] && $amount<=$game['max_players']) {
 			$amountPlayers = true;
@@ -58,11 +60,11 @@
 			}
 		}
 
-		$plus = $game['explain_minutes'] + $game['play_minutes'];
-		$endP = date('H:i:s', strtotime('+' . $plus . ' minutes',strtotime($_POST['clock'])));
 		foreach ($planning as $p) {
+			$anotherGame = getGame($p['game']);
+			$plusG = $anotherGame['explain_minutes'] + $anotherGame['play_minutes'];
 			if ($game['id'] == $p['game'] && $_POST['day'] == $p['day']) {
-				$endG = date('H:i:s', strtotime('+' . $plus . ' minutes',strtotime($p['clock'])));
+				$endG = date('H:i:s', strtotime('+' . $plusG . ' minutes',strtotime($p['clock'])));
 				if (($_POST['clock']>=$p['clock'] && $_POST['clock']<=$endG) || ($endP >= $p['clock'] && $endP <=$endG)) {
 					$playTime = false;
 					$empty['clock'] = 'kies een andere tijd. Dit spel is al bezet';
@@ -75,11 +77,15 @@
 		}
 		$splitPOST = explode(", ", $_POST['players']);
 		foreach ($planning as $p) {
-			$endG = date('H:i:s', strtotime('+' . $plus . ' minutes',strtotime($p['clock'])));
+			$anotherGame = getGame($p['game']);
+			$plusG = $anotherGame['explain_minutes'] + $anotherGame['play_minutes'];
+			$loop2 = false;
+			$loop3 = false;
+			$endG = date('H:i:s', strtotime('+' . $plusG . ' minutes',strtotime($p['clock'])));
 			$splitPlan = explode(", ", $p['players']);
 			foreach ($splitPOST as $sPOST) {
 				foreach ($splitPlan as $sPlan) {
-					if ($_POST['day'] == $p['day'] && $sPOST == $sPlan) {
+					if ($_POST['day'] == $p['day'] && ($sPOST == $sPlan || $p['explainer'] == $sPlan)) {
 						if (($_POST['clock']>=$p['clock'] && $_POST['clock']<=$endG) || ($endP >= $p['clock'] && $endP <=$endG)) {
 							$playTime = false;
 							$empty['players'] = $sPOST . ' is al op dezelfde tijd ingepland voor een ander spel';
@@ -101,16 +107,26 @@
 			}
 		}
 		foreach ($planning as $p) {
-			$endG = date('H:i:s', strtotime('+' . $plus . ' minutes',strtotime($p['clock'])));
-			if ($_POST['day'] == $p['day'] && $_POST['explainer'] == $p['explainer']) {
-				if (($_POST['clock']>=$p['clock'] && $_POST['clock']<=$endG) || ($endP >= $p['clock'] && $endP <=$endG)) {
-					$playTime = false;
-					$empty['explainer'] = $_POST['explainer'] . ' is al op dezelfde tijd ingepland voor een ander spel';
-					break;
+			$anotherGame = getGame($p['game']);
+			$plusG = $anotherGame['explain_minutes'] + $anotherGame['play_minutes'];
+			$loop2 = false;
+			$endG = date('H:i:s', strtotime('+' . $plusG . ' minutes',strtotime($p['clock'])));
+			$splitPlan = explode(", ", $p['players']);
+			foreach ($splitPlan as $sPlan) {
+				if ($_POST['day'] == $p['day'] && ($_POST['explainer'] == $p['explainer'] || $_POST['explainer'] == $sPlan)) {
+					if (($_POST['clock']>=$p['clock'] && $_POST['clock']<=$endG) || ($endP >= $p['clock'] && $endP <=$endG)) {
+						$playTime = false;
+						$empty['explainer'] = $_POST['explainer'] . ' is al op dezelfde tijd ingepland voor een ander spel';
+						$loop2 = true;
+						break;
+					}
+					else{
+						$empty['explainer'] = '';
+					}
 				}
-				else{
-					$empty['explainer'] = '';
-				}
+			}
+			if ($loop2 == true) {
+				break;
 			}
 		}
 
